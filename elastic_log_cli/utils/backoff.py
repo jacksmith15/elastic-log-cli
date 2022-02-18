@@ -32,7 +32,7 @@ class Backoff:
 
 
 def exponential_backoff(base: float = 2.0, factor: float = 1.0, maximum: int = 10) -> Backoff:
-    """Gevent-compatible exponential back-off.
+    """Exponential back-off.
 
     Usage:
 
