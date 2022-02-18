@@ -21,6 +21,7 @@ elastic-logs = "elastic_log_cli.__main__:run_cli"
 python = "^3.10"
 elasticsearch = "^7"
 pydantic = "^1.9.0"
+click = "^8.0.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"
