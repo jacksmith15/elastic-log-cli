@@ -1,6 +1,6 @@
 # Elastic Log CLI
 
-CLI for streaming logs from Elastic to terminal.
+CLI for streaming logs from Elasticsearch to a terminal.
 
 ## Installation
 
