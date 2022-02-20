@@ -1,0 +1,76 @@
+start: WS* query WS*
+
+query           : or_query
+
+?or_query       : and_query (OR and_query)+
+                | and_query
+
+?and_query      : not_query (AND not_query)+
+                | not_query
+
+?not_query      : NOT sub_query
+                | sub_query
+
+?sub_query      : "(" WS* or_query WS* ")"
+                | nested_query
+
+?nested_query   : field WS* ":" WS* "{" WS* or_query WS* "}"
+                | expression
+
+?expression             : _field_range_expression
+                        | _field_value_expression
+                        | _value_expression
+
+_field_range_expression  : field WS* RANGE_OPERATOR WS* value
+_field_value_expression  : field WS* ":" WS* list_of_values
+_value_expression        : value
+
+
+field               : _literal
+value               : _literal
+?list_of_values     : "(" WS* or_list_of_values WS* ")"
+                    | value
+?or_list_of_values  : and_list_of_values (OR and_list_of_values)+
+                    | and_list_of_values
+?and_list_of_values : not_list_of_values (AND not_list_of_values)+
+                    | not_list_of_values
+?not_list_of_values : NOT list_of_values
+                    | list_of_values
+
+_literal            : quoted_string | unquoted_literal
+quoted_string       : ESCAPED_STRING
+unquoted_literal    : UNQUOTED_CHARACTER+
+UNQUOTED_CHARACTER  : ESCAPED_WHITESPACE
+                    | ESCAPED_SPECIAL_CHARACTER
+                    | ESCAPED_UNICODE_SEQUENCE
+                    | ESCAPED_KEYWORD
+                    | WILDCARD
+                    | /(?!([\\:\(\)<>"*{}]|( +or +)|( +and +)|( +not _+)))./i
+
+ESCAPED_WHITESPACE          : "\\t"
+                            | "\\r"
+                            | "\\n"
+ESCAPED_SPECIAL_CHARACTER   : "\\" SPECIAL_CHARACTER
+ESCAPED_UNICODE_SEQUENCE    : "\\" UNICODE_SEQUENCE
+ESCAPED_KEYWORD             : "\\" ("or"i | "and"i | "not"i)
+SPECIAL_CHARACTER           : /[\\)():<>"*{}"]/
+UNICODE_SEQUENCE            : "u" HEX_DIGIT~4
+HEX_DIGIT                   : /[0-9a-f]/i
+WILDCARD                    : "*"
+
+RANGE_OPERATOR  : "<="
+                | ">="
+                | "<"
+                | ">"
+
+KEYWORD.1   : OR
+            | AND
+            | NOT
+
+OR.1    : / +or +/i
+AND.1   : / +and +/i
+NOT.1   : /not +/i
+
+%import common.WS
+%import common.ESCAPED_STRING
+%import common.LETTER
