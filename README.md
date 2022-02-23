@@ -1,4 +1,5 @@
 # Elastic Log CLI
+
 CLI for streaming logs from Elastic to terminal.
 
 ## Installation

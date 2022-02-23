@@ -1,4 +1,4 @@
-FROM python:3.9.4-slim
+FROM python:3.10.2-slim
 
 ENV LC_ALL="C.UTF-8"
 ENV LANG="C.UTF-8"
