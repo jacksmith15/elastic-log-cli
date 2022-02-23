@@ -53,7 +53,7 @@ from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationErro
 )
 @click.option("--version", type=bool, default=False, is_flag=True, help="Show version and exit.")
 def cli(specifiers: tuple[str, ...], *, page_size: int, index: str, start: datetime, end: datetime | None, timestamp_field: str, version: bool):
-    """Stream logs from Elastic.
+    """Stream logs from Elasticsearch.
 
     Positional arguments are a shorthand for filtering logs. A few types of queries are supported:
 
