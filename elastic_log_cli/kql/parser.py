@@ -67,7 +67,6 @@ class KQLTreeTransformer(Transformer):
                 "not_list_of_values": self.not_query,
             }[expression_type]
             return constructor([self.field_value_expression([field, value]) for value in expression.children])
-        print(expression)
         raise NotImplementedError
 
     def field_range_expression(self, terms) -> dict:
