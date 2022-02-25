@@ -11,6 +11,15 @@ from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationErro
 from elastic_log_cli.kql import parse
 
 
+class CSV(click.ParamType):
+    name = "csv"
+
+    def convert(self, value, param, ctx) -> list[str]:
+        if isinstance(value, list):
+            return value
+        return value.split(",")
+
+
 @click.command()
 @click.argument(
     "query",
@@ -45,6 +54,13 @@ from elastic_log_cli.kql import parse
     help="When to stop streaming logs. Omit to continuously stream logs until interrupted.",
 )
 @click.option(
+    "--source",
+    type=CSV(),
+    default=None,
+    help="Source fields to retrieve, comma-separated. Default behaviour is to fetch full document.",
+
+)
+@click.option(
     "--timestamp-field",
     "-t",
     type=str,
@@ -52,7 +68,7 @@ from elastic_log_cli.kql import parse
     help="The field which denotes the timestamp in the indexed logs."
 )
 @click.option("--version", type=bool, default=False, is_flag=True, help="Show version and exit.")
-def cli(query: str, *, page_size: int, index: str, start: datetime, end: datetime | None, timestamp_field: str, version: bool):
+def cli(query: str, *, page_size: int, index: str, start: datetime, end: datetime | None, source: list[str] | None, timestamp_field: str, version: bool):
     """Stream logs from Elasticsearch.
 
     Accepts a KQL query as its only positional argument.
@@ -67,6 +83,7 @@ def cli(query: str, *, page_size: int, index: str, start: datetime, end: datetim
         query=query_from_args(query, start=start, end=end, timestamp_field=timestamp_field),
         sort=[{timestamp_field: {"order": "asc"}}, "_seq_no"],
         size=page_size,
+        source=source,
     ):
         print(json.dumps(doc["_source"], sort_keys=True))
 
