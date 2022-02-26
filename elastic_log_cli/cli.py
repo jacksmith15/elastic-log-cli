@@ -11,6 +11,8 @@ from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationErro
 from elastic_log_cli.kql import parse
 
 
+# TODO: support shorthand datetimes
+
 class CSV(click.ParamType):
     name = "csv"
 
