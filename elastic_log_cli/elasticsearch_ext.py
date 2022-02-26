@@ -8,8 +8,6 @@ from urllib3.exceptions import ReadTimeoutError
 from elastic_log_cli.utils.backoff import Backoff, exponential_backoff
 
 
-# TODO: error log on backoff
-
 def search_after_scan(
     client: Elasticsearch,
     index: str,

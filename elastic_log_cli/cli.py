@@ -1,17 +1,18 @@
-import sys
 import json
+import sys
 from datetime import datetime, timedelta
 
 import click
 
 from elastic_log_cli import __version__
+from elastic_log_cli.backoff import exponential_backoff
 from elastic_log_cli.client import elasticsearch_client
 from elastic_log_cli.elasticsearch_ext import search_after_scan
 from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationError
 from elastic_log_cli.kql import parse
 
-
 # TODO: support shorthand datetimes
+
 
 class CSV(click.ParamType):
     name = "csv"
@@ -34,13 +35,7 @@ class CSV(click.ParamType):
     default=2000,
     help="The number of logs to fetch per page",
 )
-@click.option(
-    "--index",
-    "-i",
-    type=str,
-    default="filebeat-*",
-    help="The index to target. Globs are supported."
-)
+@click.option("--index", "-i", type=str, default="filebeat-*", help="The index to target. Globs are supported.")
 @click.option(
     "--start",
     "-s",
@@ -60,17 +55,26 @@ class CSV(click.ParamType):
     type=CSV(),
     default=None,
     help="Source fields to retrieve, comma-separated. Default behaviour is to fetch full document.",
-
 )
 @click.option(
     "--timestamp-field",
     "-t",
     type=str,
     default="@timestamp",
-    help="The field which denotes the timestamp in the indexed logs."
+    help="The field which denotes the timestamp in the indexed logs.",
 )
 @click.option("--version", type=bool, default=False, is_flag=True, help="Show version and exit.")
-def cli(query: str, *, page_size: int, index: str, start: datetime, end: datetime | None, source: list[str] | None, timestamp_field: str, version: bool):
+def cli(
+    query: str,
+    *,
+    page_size: int,
+    index: str,
+    start: datetime,
+    end: datetime | None,
+    source: list[str] | None,
+    timestamp_field: str,
+    version: bool,
+):
     """Stream logs from Elasticsearch.
 
     Accepts a KQL query as its only positional argument.
@@ -86,6 +90,7 @@ def cli(query: str, *, page_size: int, index: str, start: datetime, end: datetim
         sort=[{timestamp_field: {"order": "asc"}}, "_seq_no"],
         size=page_size,
         source=source,
+        backoff=exponential_backoff(on_backoff=log_backoff),
     ):
         print(json.dumps(doc["_source"], sort_keys=True))
 
@@ -102,6 +107,10 @@ def query_from_args(kql_query: str, *, start: datetime, end: datetime | None, ti
             ]
         }
     }
+
+
+def log_backoff(exception: Exception, amount: float) -> None:
+    click.echo(f"Got error whilst querying Elasticsearch, backing off for {amount:.2f}s. Error: {exception}", err=True)
 
 
 def run_cli():
