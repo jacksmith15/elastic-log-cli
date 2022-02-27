@@ -1,38 +1,38 @@
-start: WS* query WS*
+start: _WHITESPACE* query _WHITESPACE*
 
 query           : or_query
 
-?or_query       : and_query (OR and_query)+
+?or_query       : and_query (_OR and_query)+
                 | and_query
 
-?and_query      : not_query (AND not_query)+
+?and_query      : not_query (_AND not_query)+
                 | not_query
 
 ?not_query      : NOT sub_query
                 | sub_query
 
-?sub_query      : "(" WS* or_query WS* ")"
+?sub_query      : "(" _WHITESPACE* or_query _WHITESPACE* ")"
                 | nested_query
 
-?nested_query   : field WS* ":" WS* "{" WS* or_query WS* "}"
+?nested_query   : field _WHITESPACE* ":" _WHITESPACE* "{" _WHITESPACE* or_query _WHITESPACE* "}"
                 | expression
 
-?expression             : _field_range_expression
-                        | _field_value_expression
-                        | _value_expression
+?expression             : field_range_expression
+                        | field_value_expression
+                        | value_expression
 
-_field_range_expression  : field WS* RANGE_OPERATOR WS* value
-_field_value_expression  : field WS* ":" WS* list_of_values
-_value_expression        : value
+field_range_expression  : field _WHITESPACE* RANGE_OPERATOR _WHITESPACE* value
+field_value_expression  : field _WHITESPACE* ":" _WHITESPACE* list_of_values
+value_expression        : field
 
 
 field               : _literal
 value               : _literal
-?list_of_values     : "(" WS* or_list_of_values WS* ")"
+?list_of_values     : "(" _WHITESPACE* or_list_of_values _WHITESPACE* ")"
                     | value
-?or_list_of_values  : and_list_of_values (OR and_list_of_values)+
+?or_list_of_values  : and_list_of_values (_OR and_list_of_values)+
                     | and_list_of_values
-?and_list_of_values : not_list_of_values (AND not_list_of_values)+
+?and_list_of_values : not_list_of_values (_AND not_list_of_values)+
                     | not_list_of_values
 ?not_list_of_values : NOT list_of_values
                     | list_of_values
@@ -63,13 +63,15 @@ RANGE_OPERATOR  : "<="
                 | "<"
                 | ">"
 
-KEYWORD.1   : OR
-            | AND
+KEYWORD.1   : _OR
+            | _AND
             | NOT
 
-OR.1    : / +or +/i
-AND.1   : / +and +/i
-NOT.1   : /not +/i
+_OR.1    : / +or +/i
+_AND.1   : / +and +/i
+NOT.1    : /not +/i
+
+_WHITESPACE : WS
 
 %import common.WS
 %import common.ESCAPED_STRING
