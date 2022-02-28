@@ -6,9 +6,7 @@ from lark import Lark, Token, Transformer, Tree
 
 # TODO: Multi-field
 # TODO: Field-awareness
-# TODO: Value-lists `field:(value or othervalue)`
 # TODO: Nested query
-# TODO: Sub-query
 # TODO: Escape stripping
 
 
@@ -24,12 +22,13 @@ class KQLTreeTransformer(Transformer):
         return body[0]
 
     def query(self, terms) -> dict:
-        return {"query": terms}
+        assert len(terms) == 1
+        return terms[0]
 
     def not_query(self, operands: list) -> dict:
         return {
             "bool": {
-                "must_not": operands[-1]
+                "must_not": [operands[-1]]
             }
         }
 
@@ -61,9 +60,16 @@ class KQLTreeTransformer(Transformer):
                     field: expression
                 }
             }
-        else:
-            raise NotImplementedError
-        return [field, expression]
+        elif isinstance(expression, Tree):
+            expression_type = expression.data.value  # type: ignore[attr-defined]
+            constructor = {
+                "or_list_of_values": self.or_query,
+                "and_list_of_values": self.and_query,
+                "not_list_of_values": self.not_query,
+            }[expression_type]
+            return constructor([self.field_value_expression([field, value]) for value in expression.children])
+        print(expression)
+        raise NotImplementedError
 
     def field_range_expression(self, terms) -> dict:
         field, operator, value = terms
@@ -85,12 +91,19 @@ class KQLTreeTransformer(Transformer):
     def value(self, values: list[Token]) -> str:
         return str(values[0])
 
+    def quoted_string(self, values: list) -> str:
+        assert len(values) == 1
+        string = values[0]
+        string = string.removeprefix('"')
+        string = string.removesuffix('"')
+        return string
+
     def unquoted_literal(self, values: list[Token]) -> str:
         return "".join(values)
 
 
-def parse(string: str) -> Tree:
-    return get_parser().parse(string)
+def parse(string: str) -> dict:
+    return transform(get_parser().parse(string))
 
 
 def transform(tree: Tree) -> dict:
