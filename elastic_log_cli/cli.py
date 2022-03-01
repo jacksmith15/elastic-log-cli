@@ -64,20 +64,20 @@ def cli(query: str, *, page_size: int, index: str, start: datetime, end: datetim
     for doc in search_after_scan(
         client,
         index=index,
-        query=query_from_kql(query, start=start, end=end, timestamp_field=timestamp_field),
+        query=query_from_args(query, start=start, end=end, timestamp_field=timestamp_field),
         sort=[{timestamp_field: {"order": "asc"}}, "_seq_no"],
         size=page_size,
     ):
         print(json.dumps(doc["_source"], sort_keys=True))
 
 
-def query_from_kql(kql_query: str, *, start: datetime, end: datetime | None, timestamp_field: str) -> dict:
+def query_from_args(kql_query: str, *, start: datetime, end: datetime | None, timestamp_field: str) -> dict:
     time_filter = {"range": {timestamp_field: {"gte": start.isoformat()}}}
     if end:
         time_filter["range"][timestamp_field]["lte"] = end.isoformat()
     return {
         "bool": {
-            "must": [
+            "filter": [
                 time_filter,
                 parse(kql_query),
             ]
