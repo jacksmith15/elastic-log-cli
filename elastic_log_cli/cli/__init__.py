@@ -6,15 +6,15 @@ import click
 
 from elastic_log_cli import __version__
 from elastic_log_cli.client import elasticsearch_client
-from elastic_log_cli.cli.parser import build_query
 from elastic_log_cli.elasticsearch_ext import search_after_scan
 from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationError
+from elastic_log_cli.kql import parse
 
 
 @click.command()
 @click.argument(
-    "specifiers",
-    nargs=-1,
+    "query",
+    nargs=1,
 )
 @click.option(
     "--page-size",
@@ -52,37 +52,37 @@ from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationErro
     help="The field which denotes the timestamp in the indexed logs."
 )
 @click.option("--version", type=bool, default=False, is_flag=True, help="Show version and exit.")
-def cli(specifiers: tuple[str, ...], *, page_size: int, index: str, start: datetime, end: datetime | None, timestamp_field: str, version: bool):
+def cli(query: str, *, page_size: int, index: str, start: datetime, end: datetime | None, timestamp_field: str, version: bool):
     """Stream logs from Elasticsearch.
 
-    Positional arguments are a shorthand for filtering logs. A few types of queries are supported:
-
-    \b
-    'exists'              : {field}
-    'term'                : {field}={value}
-    'range'               : {field}>{value} or {field}<{value}
-    'match'               : {field}~{value}
-    'match_phrase_prefix' : {field}~{value}*
-
+    Accepts a KQL query as its only positional argument.
     """
     if version:
         print(__version__)
         sys.exit(0)
-    query = build_query(
-        specifiers,
-        start=start,
-        end=end,
-        timestamp_field=timestamp_field,
-    )
     client = elasticsearch_client()
     for doc in search_after_scan(
         client,
         index=index,
-        query=query,
+        query=query_from_kql(query, start=start, end=end, timestamp_field=timestamp_field),
         sort=[{timestamp_field: {"order": "asc"}}, "_seq_no"],
         size=page_size,
     ):
         print(json.dumps(doc["_source"], sort_keys=True))
+
+
+def query_from_kql(kql_query: str, *, start: datetime, end: datetime | None, timestamp_field: str) -> dict:
+    time_filter = {"range": {timestamp_field: {"gte": start.isoformat()}}}
+    if end:
+        time_filter["range"][timestamp_field]["lte"] = end.isoformat()
+    return {
+        "bool": {
+            "must": [
+                time_filter,
+                parse(kql_query),
+            ]
+        }
+    }
 
 
 def run_cli():
