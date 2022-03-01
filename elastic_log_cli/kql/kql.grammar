@@ -39,8 +39,8 @@ value               : _literal
 
 _literal            : quoted_string | unquoted_literal
 quoted_string       : ESCAPED_STRING
-unquoted_literal    : UNQUOTED_CHARACTER+
-UNQUOTED_CHARACTER  : ESCAPED_WHITESPACE
+unquoted_literal    : unquoted_character+
+unquoted_character  : ESCAPED_WHITESPACE
                     | ESCAPED_SPECIAL_CHARACTER
                     | ESCAPED_UNICODE_SEQUENCE
                     | ESCAPED_KEYWORD

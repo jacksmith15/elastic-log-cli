@@ -49,9 +49,12 @@ class TestParseKQL:
             ('"foo">="bar"', {"range": {"foo": {"gte": "bar"}}}),
             ('"foo"<"bar"', {"range": {"foo": {"lt": "bar"}}}),
             ('"foo"<="bar"', {"range": {"foo": {"lte": "bar"}}}),
-            pytest.param('foo:"bar\\"baz"', {"match": {"foo": 'bar"baz'}}, marks=pytest.mark.xfail),
+            ('foo:"bar\\"baz"', {"match": {"foo": 'bar"baz'}}),
             ("foo:bar baz", {"match": {"foo": "bar baz"}}),
-            pytest.param(r"foo:bar\:baz", {"match": {"foo": "bar:baz"}}, marks=pytest.mark.xfail),
+            (r"foo:bar\:baz", {"match": {"foo": "bar:baz"}}),
+            (r"foo:bar\u005dbaz", {"match": {"foo": "bar]baz"}}),
+            (r"foo:bar \and baz", {"match": {"foo": "bar and baz"}}),
+            (r"foo:bar\tbaz", {"match": {"foo": "bar\tbaz"}}),
             (" foo ", {"exists": {"field": "foo"}}),
             ("foo:bar and qux:mux", {"bool": {"filter": [{"match": {"foo": "bar"}}, {"match": {"qux": "mux"}}]}}),
             (
@@ -155,7 +158,83 @@ class TestParseKQL:
                     }
                 },
             ),
-            ("foo:(bar and not baz)", {"bool": {"filter": [{"match": {"foo": "bar"}}, {"bool": {"must_not": [{"match": {"foo": "baz"}}]}}]}})
+            ("foo:(bar and not baz)", {"bool": {"filter": [{"match": {"foo": "bar"}}, {"bool": {"must_not": [{"match": {"foo": "baz"}}]}}]}}),
+            (
+                "items:{ name:banana and stock:9 }",
+                {
+                    "nested": {
+                        "path": "items",
+                        "query": {
+                            "bool": {
+                                "filter": [
+                                    {"match": {"items.name": "banana"}},
+                                    {"match": {"items.stock": "9"}},
+                                ]
+                            }
+                        },
+                        "score_mode": "none",
+                    },
+                },
+            ),
+            (
+                "items:{ name:banana } and items:{ stock:9 }",
+                {
+                    "bool": {
+                        "filter": [
+                            {
+                                "nested": {
+                                    "path": "items",
+                                    "query": {
+                                        "match": {"items.name": "banana"},
+                                    },
+                                    "score_mode": "none",
+                                }
+                            },
+                            {
+                                "nested": {
+                                    "path": "items",
+                                    "query": {
+                                        "match": {"items.stock": "9"},
+                                    },
+                                    "score_mode": "none",
+                                }
+                            }
+                        ]
+                    }
+                },
+            ),
+            (
+                "items:{ name:banana and stock > 10 } and items:{ category:vegetable }",
+                {
+                    "bool": {
+                        "filter": [
+                            {
+                                "nested": {
+                                    "path": "items",
+                                    "query": {
+                                        "bool": {
+                                            "filter": [
+                                                {"match": {"items.name": "banana"}},
+                                                {"range": {"items.stock": {"gt": "10"}}},
+                                            ]
+                                        }
+                                    },
+                                    "score_mode": "none",
+                                },
+                            },
+                            {
+                                "nested": {
+                                    "path": "items",
+                                    "query": {
+                                        "match": {"items.category": "vegetable"},
+                                    },
+                                    "score_mode": "none",
+                                },
+                            },
+                        ]
+                    }
+                },
+            )
         ],
     )
     def should_produce_expected_query(query: str, expected: dict):
