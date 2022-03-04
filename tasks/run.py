@@ -16,6 +16,7 @@ def env_file() -> str:
 
 @task(pre=[build])
 def run(ctx, command=None):
+    """Run a command in the built docker image."""
     tag = f"elastic-log-cli:{package.__version__}"
     if command:
         ctx.run(f"docker run -it --env-file {env_file()} --entrypoint {command} {tag}", pty=True)
