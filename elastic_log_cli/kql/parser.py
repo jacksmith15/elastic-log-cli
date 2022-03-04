@@ -10,6 +10,7 @@ from lark import Lark, Token, Transformer, Tree
 # TODO: Multi-nested query (using field awareness?)
 # TODO: Wildcards for prefix matching on values
 # TODO: Wildcards for prefix matching (including sub-fields) on fields
+# TODO: Better errors on failure
 
 
 @cache

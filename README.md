@@ -85,6 +85,18 @@ Options:
 <!-- generated usage end -->
 
 
+### Example
+
+```shell
+elastic-logs \
+    --start 2022-03-05T12:00:00 \
+    --end 2022-03-05T13:00:00 \
+    --source time,level,message,error \
+    --index filebeat-7.16.2 \
+    --timestamp-field time \
+    'level:ERROR and error.code:500'
+```
+
 ## Development
 
 Install dependencies:
