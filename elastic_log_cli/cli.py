@@ -5,13 +5,11 @@ from datetime import datetime, timedelta
 import click
 
 from elastic_log_cli import __version__
-from elastic_log_cli.backoff import exponential_backoff
 from elastic_log_cli.client import elasticsearch_client
 from elastic_log_cli.elasticsearch_ext import search_after_scan
 from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationError
 from elastic_log_cli.kql import parse
-
-# TODO: support shorthand datetimes
+from elastic_log_cli.utils.backoff import exponential_backoff
 
 
 class CSV(click.ParamType):
@@ -39,14 +37,14 @@ class CSV(click.ParamType):
 @click.option(
     "--start",
     "-s",
-    type=click.DateTime(),
-    default=datetime.now() - timedelta(hours=1),
+    type=str,
+    default=(datetime.now() - timedelta(hours=1)).isoformat(),
     help="When to begin streaming logs from.",
 )
 @click.option(
     "--end",
     "-e",
-    type=click.DateTime(),
+    type=str,
     default=None,
     help="When to stop streaming logs. Omit to continuously stream logs until interrupted.",
 )
@@ -69,8 +67,8 @@ def cli(
     *,
     page_size: int,
     index: str,
-    start: datetime,
-    end: datetime | None,
+    start: str,
+    end: str | None,
     source: list[str] | None,
     timestamp_field: str,
     version: bool,
@@ -90,15 +88,15 @@ def cli(
         sort=[{timestamp_field: {"order": "asc"}}, "_seq_no"],
         size=page_size,
         source=source,
-        backoff=exponential_backoff(on_backoff=log_backoff),
+        backoff=exponential_backoff(on_backoff=_log_backoff),
     ):
         print(json.dumps(doc["_source"], sort_keys=True))
 
 
-def query_from_args(kql_query: str, *, start: datetime, end: datetime | None, timestamp_field: str) -> dict:
-    time_filter = {"range": {timestamp_field: {"gte": start.isoformat()}}}
+def query_from_args(kql_query: str, *, start: str, end: str | None, timestamp_field: str) -> dict:
+    time_filter = {"range": {timestamp_field: {"gte": start}}}
     if end:
-        time_filter["range"][timestamp_field]["lte"] = end.isoformat()
+        time_filter["range"][timestamp_field]["lte"] = end
     return {
         "bool": {
             "filter": [
@@ -109,7 +107,7 @@ def query_from_args(kql_query: str, *, start: datetime, end: datetime | None, ti
     }
 
 
-def log_backoff(exception: Exception, amount: float) -> None:
+def _log_backoff(exception: Exception, amount: float) -> None:
     click.echo(f"Got error whilst querying Elasticsearch, backing off for {amount:.2f}s. Error: {exception}", err=True)
 
 
