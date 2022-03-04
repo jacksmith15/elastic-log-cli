@@ -4,8 +4,7 @@ from pathlib import Path
 
 from lark import Lark, Token, Transformer, Tree
 
-
-# TODO: Multi-field
+# TODO: Multi-field (e.g. *:value)
 # TODO: Field-awareness
 # TODO: Multi-nested query (using field awareness?)
 # TODO: Wildcards for prefix matching on values
@@ -101,6 +100,7 @@ class KQLTreeTransformer(Transformer):
         if token_type == "ESCAPED_UNICODE_SEQUENCE":
             return value.encode("utf-8").decode("unicode-escape")
         return value
+
 
 def parse(string: str) -> dict:
     return transform(get_parser().parse(string))
