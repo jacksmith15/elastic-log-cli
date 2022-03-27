@@ -1,6 +1,6 @@
 import pytest
 
-from elastic_log_cli.kql.parser import get_parser, transform, parse
+from elastic_log_cli.kql.parser import get_parser, parse, transform
 
 
 class TestParseKQL:
@@ -158,7 +158,10 @@ class TestParseKQL:
                     }
                 },
             ),
-            ("foo:(bar and not baz)", {"bool": {"filter": [{"match": {"foo": "bar"}}, {"bool": {"must_not": [{"match": {"foo": "baz"}}]}}]}}),
+            (
+                "foo:(bar and not baz)",
+                {"bool": {"filter": [{"match": {"foo": "bar"}}, {"bool": {"must_not": [{"match": {"foo": "baz"}}]}}]}},
+            ),
             (
                 "items:{ name:banana and stock:9 }",
                 {
@@ -198,7 +201,7 @@ class TestParseKQL:
                                     },
                                     "score_mode": "none",
                                 }
-                            }
+                            },
                         ]
                     }
                 },
@@ -234,7 +237,7 @@ class TestParseKQL:
                         ]
                     }
                 },
-            )
+            ),
         ],
     )
     def should_produce_expected_query(query: str, expected: dict):

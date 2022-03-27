@@ -97,6 +97,14 @@ elastic-logs \
     'level:ERROR and error.code:500'
 ```
 
+### KQL support
+
+The following KQL features are not yet supported:
+
+- Wildcard fields, e.g. `*:value` or `machine.os*:windows 10`
+- Prefix matching, e.g. `machine.os:win*`
+
+
 ## Development
 
 Install dependencies:

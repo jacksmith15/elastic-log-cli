@@ -1,3 +1,7 @@
+"""KQL Parser.
+
+Based on https://github.com/elastic/kibana/tree/614139b8e5a38c60918586c2282eb75c88fedb80/packages/kbn-es-query
+"""
 import json
 from functools import cache
 from pathlib import Path
@@ -9,7 +13,6 @@ from lark import Lark, Token, Transformer, Tree
 # TODO: Multi-nested query (using field awareness?)
 # TODO: Wildcards for prefix matching on values
 # TODO: Wildcards for prefix matching (including sub-fields) on fields
-# TODO: Better errors on failure
 
 
 @cache
