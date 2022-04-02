@@ -15,6 +15,7 @@ Types of changes are:
 ## [Unreleased]
 ### Added
 * Project started :)
+* Implemented support for (most) KQL queries
 
 [Unreleased]: https://github.com/jacksmith15/elastic-log-cli/compare/initial..HEAD
 
