@@ -50,9 +50,11 @@ def _validate_branch(ctx):
         raise Exit(code=1, message="Local branch is not up-to-date with remote.")
 
 
-@task(pre=[_validate_branch, verify])
-def release(ctx, dry_run=False):
+@task(pre=[_validate_branch])
+def release(ctx, dry_run=False, no_verify=False):
     """Perform a release, by updating metadata, tagging commit, and publishing."""
+    if not no_verify:
+        verify(ctx)
     print_header("Starting release")
     print_header("Determining release type", level=2)
     release_tag = update_release_tags()
