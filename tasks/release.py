@@ -4,12 +4,12 @@ import re
 from collections.abc import Callable
 from pathlib import Path
 
+import changelog
+from changelog.renderer import render_changelog_release
 from invoke import task
 from invoke.exceptions import Exit, UnexpectedExit
 from termcolor import colored
 
-import changelog
-from changelog.renderer import render_changelog_release
 from tasks.helpers import package, print_header
 from tasks.verify import verify
 
@@ -18,11 +18,11 @@ RELEASE_BRANCH = "main"
 PACKAGE_FILE = str(Path(package.__file__).relative_to(Path(__file__).parent.parent.absolute()))
 
 
-@task()
+@task(pre=[verify])
 def build(ctx):
-    """Build docker image."""
-    print_header("Building image")
-    ctx.run(f"docker build . --tag elastic-log-cli:{package.__version__}")
+    """Build wheel and sdist."""
+    print_header("Building package")
+    ctx.run("poetry build")
 
 
 @task()
@@ -56,8 +56,11 @@ def release(ctx, dry_run=False):
     if not dry_run:
         tag_release(ctx, release_tag)
 
-    print_header("Publishing image", level=2)
-    print("No image publishing set-up")
+    print_header("Publishing to PyPi", level=2)
+    if not dry_run:
+        ctx.run("poetry publish")
+    else:
+        ctx.run("poetry publish --dry-run")
     return
 
 

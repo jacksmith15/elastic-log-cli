@@ -1,6 +1,7 @@
 from invoke import Collection
 
 from tasks.changelog_check import changelog_check
+from tasks.docker import namespace as docker
 from tasks.docs import namespace as docs
 from tasks.lint import lint
 from tasks.release import build, release
@@ -13,6 +14,7 @@ namespace = Collection(
     build,
     changelog_check,
     coverage,
+    docker,
     docs,
     lint,
     release,
