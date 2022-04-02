@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import re
 from collections.abc import Callable
 from pathlib import Path
@@ -11,7 +10,7 @@ from invoke import task
 from invoke.exceptions import Exit, UnexpectedExit
 from termcolor import colored
 
-from tasks.helpers import package, print_header
+from tasks.helpers import package, print_header, run_outside_venv
 from tasks.verify import verify
 
 RELEASE_BRANCH = "main"
@@ -23,15 +22,7 @@ PACKAGE_FILE = str(Path(package.__file__).relative_to(Path(__file__).parent.pare
 def build(ctx):
     """Build wheel and sdist."""
     print_header("Building package")
-    # We deactivate the virtualenv for this command, because otherwise poetry will not find its deps.
-    environment = os.environ.copy()
-    venv_path = environment.get("VIRTUAL_ENV")
-    if venv_path:
-        del environment["VIRTUAL_ENV"]
-    environment["PATH"] = ":".join(
-        [path for path in environment.get("PATH", "").split(":") if path != f"{venv_path}/bin"]
-    )
-    ctx.run("poetry build", env=environment)
+    run_outside_venv(ctx, "poetry build")
 
 
 @task()
@@ -69,9 +60,9 @@ def release(ctx, dry_run=False, no_verify=False):
 
     print_header("Publishing to PyPi", level=2)
     if not dry_run:
-        ctx.run("poetry publish")
+        run_outside_venv(ctx, "poetry publish")
     else:
-        ctx.run("poetry publish --dry-run")
+        run_outside_venv(ctx, "poetry publish --dry-run")
     return
 
 

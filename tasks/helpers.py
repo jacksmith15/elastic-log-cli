@@ -1,3 +1,4 @@
+import os
 import shutil
 
 import elastic_log_cli as package
@@ -14,6 +15,18 @@ def print_header(text: str, level: int = 1, icon: str = ""):
     if level == 1:
         text = text.upper()
     print(padding.format(f"{icon}{text}{icon}"))
+
+
+def run_outside_venv(ctx, *args, **kwargs):
+    environment = os.environ.copy()
+    venv_path = environment.get("VIRTUAL_ENV")
+    if venv_path:
+        del environment["VIRTUAL_ENV"]
+    environment["PATH"] = ":".join(
+        [path for path in environment.get("PATH", "").split(":") if path != f"{venv_path}/bin"]
+    )
+    environment.update(kwargs.pop("env", {}))
+    ctx.run(*args, env=environment, **kwargs)
 
 
 __all__ = ["print_header", "package"]
