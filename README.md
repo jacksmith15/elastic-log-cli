@@ -4,12 +4,14 @@ CLI for streaming logs from Elasticsearch to a terminal.
 
 ## Installation
 
-This project is not currently packaged and so must be installed manually.
+Install with `pip`:
 
-Clone the project with the following command:
+```bash
+pip install elastic-log-cli
 ```
-git clone https://github.com/jacksmith15/elastic-log-cli.git
-```
+
+> :memo: Requires Python 3.10
+
 
 ## Configuration
 
