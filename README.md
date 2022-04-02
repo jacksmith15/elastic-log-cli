@@ -67,19 +67,17 @@ Usage: elastic-logs [OPTIONS] QUERY
   Accepts a KQL query as its only positional argument.
 
 Options:
-  -p, --page-size INTEGER RANGE   The number of logs to fetch per page  [x>=0]
-  -i, --index TEXT                The index to target. Globs are supported.
-  -s, --start [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]
-                                  When to begin streaming logs from.
-  -e, --end [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]
-                                  When to stop streaming logs. Omit to
-                                  continuously stream logs until interrupted.
-  --source CSV                    Source fields to retrieve, comma-separated.
-                                  Default behaviour is to fetch full document.
-  -t, --timestamp-field TEXT      The field which denotes the timestamp in the
-                                  indexed logs.
-  --version                       Show version and exit.
-  --help                          Show this message and exit.
+  -p, --page-size INTEGER RANGE  The number of logs to fetch per page  [x>=0]
+  -i, --index TEXT               The index to target. Globs are supported.
+  -s, --start TEXT               When to begin streaming logs from.
+  -e, --end TEXT                 When to stop streaming logs. Omit to
+                                 continuously stream logs until interrupted.
+  --source CSV                   Source fields to retrieve, comma-separated.
+                                 Default behaviour is to fetch full document.
+  -t, --timestamp-field TEXT     The field which denotes the timestamp in the
+                                 indexed logs.
+  --version                      Show version and exit.
+  --help                         Show this message and exit.
 
 ```
 <!-- generated usage end -->
