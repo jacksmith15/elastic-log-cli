@@ -19,7 +19,6 @@ elastic-logs = "elastic_log_cli.__main__:run_cli"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-elasticsearch = "^7"
 pydantic = "^1.9.0"
 click = "^8.0.4"
 lark = "^1.1.1"

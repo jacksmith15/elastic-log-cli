@@ -154,24 +154,6 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
-name = "elasticsearch"
-version = "7.17.4"
-description = "Python client for Elasticsearch"
-category = "main"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
-
-[package.dependencies]
-certifi = "*"
-urllib3 = ">=1.21.1,<2"
-
-[package.extras]
-async = ["aiohttp (>=3,<4)"]
-develop = ["requests (>=2.0.0,<3.0.0)", "coverage", "mock", "pyyaml", "pytest", "pytest-cov", "sphinx (<1.7)", "sphinx-rtd-theme", "black", "jinja2"]
-docs = ["sphinx (<1.7)", "sphinx-rtd-theme"]
-requests = ["requests (>=2.4.0,<3.0.0)"]
-
-[[package]]
 name = "executing"
 version = "0.9.1"
 description = "Get the currently executing AST node of a frame, and other information"
@@ -727,7 +709,7 @@ aws = ["botocore", "boto3"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "96162b39656ea63ec7704e4c470e7916d4208e900d3ed1454a77428943c45ed2"
+content-hash = "8d53ade1558996e238da4d407ad4c1e683d0e75658dde3efc469002854701b00"
 
 [metadata.files]
 appnope = []
@@ -756,7 +738,6 @@ decorator = [
     {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
     {file = "decorator-5.1.1.tar.gz", hash = "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330"},
 ]
-elasticsearch = []
 executing = []
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
