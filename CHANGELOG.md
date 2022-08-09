@@ -13,7 +13,8 @@ Types of changes are:
 * **Fixed** for any bug fixes.
 
 ## [Unreleased]
-
+### Fixed
+* Omitting the `--end` option now correctly follows logs until interrupted
 
 ## [0.2.0] - 2022-08-09
 ### Added

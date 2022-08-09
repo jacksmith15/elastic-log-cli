@@ -23,6 +23,7 @@ def search_after_scan(
     source: list[str] = None,
     size: int = 1000,
     backoff: Backoff = None,
+    follow: bool = False,
 ) -> Iterator[dict]:
     """Implementation of `search_after` pagination (without point-in-time).
 
@@ -50,9 +51,12 @@ def search_after_scan(
                 search_after=search_after,
             )
             hits = result["hits"]["hits"]
-            if not hits:
+            if not hits and not follow:
                 return
-            search_after = hits[-1]["sort"]
+            try:
+                search_after = hits[-1]["sort"]
+            except IndexError:
+                pass
             for hit in hits:
                 yield hit
 
