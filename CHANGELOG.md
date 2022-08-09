@@ -15,6 +15,7 @@ Types of changes are:
 ## [Unreleased]
 ### Added
 * Added support for Amazon OpenSearch Service using AWS Signature v4 auth
+* May now configure timestamp field and index pattern via environment variables
 
 ### Changed
 * Dropped dependency on `elasticsearch-py` to allow easy interoperability with OpenSearch

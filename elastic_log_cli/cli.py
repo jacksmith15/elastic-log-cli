@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import click
 
 from elastic_log_cli import __version__
+from elastic_log_cli.config import get_settings
 from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationError
 from elastic_log_cli.kql import parse
 from elastic_log_cli.search import search_after_scan
@@ -32,7 +33,14 @@ class CSV(click.ParamType):
     default=2000,
     help="The number of logs to fetch per page",
 )
-@click.option("--index", "-i", type=str, default="filebeat-*", help="The index to target. Globs are supported.")
+@click.option(
+    "--index",
+    "-i",
+    type=str,
+    default=lambda: get_settings().elasticsearch_index,
+    show_default="filebeat-*",
+    help="The index to target. Globs are supported.",
+)
 @click.option(
     "--start",
     "-s",
@@ -57,7 +65,8 @@ class CSV(click.ParamType):
     "--timestamp-field",
     "-t",
     type=str,
-    default="@timestamp",
+    default=lambda: get_settings().elasticsearch_timestamp_field,
+    show_default="@timestamp",
     help="The field which denotes the timestamp in the indexed logs.",
 )
 @click.option("--version", type=bool, default=False, is_flag=True, help="Show version and exit.")
