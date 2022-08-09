@@ -5,10 +5,9 @@ from datetime import datetime, timedelta
 import click
 
 from elastic_log_cli import __version__
-from elastic_log_cli.client import elasticsearch_client
-from elastic_log_cli.elasticsearch_ext import search_after_scan
 from elastic_log_cli.exceptions import ElasticLogError, ElasticLogValidationError
 from elastic_log_cli.kql import parse
+from elastic_log_cli.search import search_after_scan
 from elastic_log_cli.utils.backoff import exponential_backoff
 
 
@@ -80,9 +79,7 @@ def cli(
     if version:
         print(__version__)
         sys.exit(0)
-    client = elasticsearch_client()
     for doc in search_after_scan(
-        client,
         index=index,
         query=query_from_args(query, start=start, end=end, timestamp_field=timestamp_field),
         sort=[{timestamp_field: {"order": "asc"}}, "_seq_no"],
