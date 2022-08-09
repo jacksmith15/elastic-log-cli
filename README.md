@@ -17,6 +17,8 @@ pip install elastic-log-cli
 
 The following environment variables are used to configure the tool. For secure, easy selection of target clusters, a tool like [envchain](https://github.com/sorah/envchain) is recommended.
 
+Where available, CLI options will override environment variables.
+
 <!-- generated env. vars. start -->
 ### `ELASTICSEARCH_URL`
 
@@ -63,6 +65,18 @@ Finally, if you are using [Amazon OpenSearch Service](https://aws.amazon.com/ope
 *Optional*, default value: `40`
 
 How long to wait on Elasticsearch requests.
+
+### `ELASTICSEARCH_INDEX`
+
+*Optional*, default value: `filebeat-*`
+
+The index to target. Globs are supported.
+
+### `ELASTICSEARCH_TIMESTAMP_FIELD`
+
+*Optional*, default value: `@timestamp`
+
+The field which denotes the timestamp in the indexed logs.
 <!-- generated env. vars. end -->
 
 ## Usage
@@ -78,13 +92,14 @@ Usage: elastic-logs [OPTIONS] QUERY
 Options:
   -p, --page-size INTEGER RANGE  The number of logs to fetch per page  [x>=0]
   -i, --index TEXT               The index to target. Globs are supported.
+                                 [default: (filebeat-*)]
   -s, --start TEXT               When to begin streaming logs from.
   -e, --end TEXT                 When to stop streaming logs. Omit to
                                  continuously stream logs until interrupted.
   --source CSV                   Source fields to retrieve, comma-separated.
                                  Default behaviour is to fetch full document.
   -t, --timestamp-field TEXT     The field which denotes the timestamp in the
-                                 indexed logs.
+                                 indexed logs.  [default: (@timestamp)]
   --version                      Show version and exit.
   --help                         Show this message and exit.
 

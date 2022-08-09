@@ -37,6 +37,12 @@ Finally, if you are using [Amazon OpenSearch Service](https://aws.amazon.com/ope
 
     elasticsearch_timeout: int = Field(40, description="How long to wait on Elasticsearch requests.")
 
+    elasticsearch_index: str = Field("filebeat-*", description="The index to target. Globs are supported.")
+
+    elasticsearch_timestamp_field: str = Field(
+        "@timestamp", description="The field which denotes the timestamp in the indexed logs."
+    )
+
     @property
     def is_cloud(self):
         return self.elasticsearch_url.startswith("cloud:")
