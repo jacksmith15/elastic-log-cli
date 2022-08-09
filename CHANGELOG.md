@@ -13,7 +13,11 @@ Types of changes are:
 * **Fixed** for any bug fixes.
 
 ## [Unreleased]
+### Added
+* Added support for Amazon OpenSearch Service using AWS Signature v4 auth
 
+### Changed
+* Dropped dependency on `elasticsearch-py` to allow easy interoperability with OpenSearch
 
 ## [0.1.0] - 2022-04-02
 ### Added

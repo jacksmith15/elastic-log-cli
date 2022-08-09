@@ -19,10 +19,12 @@ elastic-logs = "elastic_log_cli.__main__:run_cli"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-elasticsearch = "^7"
 pydantic = "^1.9.0"
 click = "^8.0.4"
 lark = "^1.1.1"
+botocore = {version = "^1.27.46", optional = true}
+boto3 = {version = "^1.24.46", optional = true}
+requests = "^2.28.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"
@@ -35,10 +37,14 @@ invoke = "^1.6.0"
 termcolor = "^1.1.0"
 pytest-cov = "^3.0.0"
 changelog-cmd = "^0.2.0"
+types-requests = "^2.28.0"
 types-termcolor = "^1.1.3"
 types-toml = "^0.10.4"
 types-urllib3 = "^1.26.9"
 settings-doc = "^0.8.1"
+
+[tool.poetry.extras]
+aws = ["botocore", "boto3"]
 
 [tool.isort]
 # Setting compatible with black. See https://black.readthedocs.io/en/stable/compatible_configs.html
@@ -79,6 +85,8 @@ follow_imports = "normal"
 module = [
     "setuptools.*",
     "invoke.*",
+    "boto3.*",
+    "botocore.*",
 ]
 ignore_missing_imports = true
 

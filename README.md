@@ -40,16 +40,23 @@ Password for the Elasticsearch cluster containing logs.
 
 *Optional*, default value: `basicauth`
 
-Whether to authenticate using Basic Auth or an API Key. If using `apikey`, provide as follows:
+Specify which authentication mode you are using.
+
+The default behaviour is `basicauth`, which encodes the username and password using HTTP Basic Auth.
+
+You may also set this to `apikey`, in which case the API Keys should be provided as follows:
 
 ```
 ELASTICSEARCH_USERNAME=${APIKEY_NAME}
 ELASTICSEARCH_PASSWORD=${APIKEY_KEY}
 ```
 
+Finally, if you are using [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service/) with [AWS Signature V4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) auth, then set this to `awssigv4`. AWS credentials will be read from the environment and used to sign your requests.
+
+
 #### Possible values
 
-`basicauth`, `apikey`
+`basicauth`, `apikey`, `awssigv4`
 
 ### `ELASTICSEARCH_TIMEOUT`
 
@@ -103,7 +110,7 @@ The following KQL features are not yet supported:
 
 - Wildcard fields, e.g. `*:value` or `machine.os*:windows 10`
 - Prefix matching, e.g. `machine.os:win*`
-
+- Match phrase, e.g. `message:"A quick brown fox"`
 
 ## Development
 
