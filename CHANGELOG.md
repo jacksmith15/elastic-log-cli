@@ -13,6 +13,9 @@ Types of changes are:
 * **Fixed** for any bug fixes.
 
 ## [Unreleased]
+
+
+## [0.2.0] - 2022-08-09
 ### Added
 * Added support for Amazon OpenSearch Service using AWS Signature v4 auth
 * May now configure timestamp field and index pattern via environment variables
@@ -25,7 +28,8 @@ Types of changes are:
 * Project started :)
 * Implemented support for (most) KQL queries
 
-[Unreleased]: https://github.com/jacksmith15/elastic-log-cli/compare/0.1.0..HEAD
+[Unreleased]: https://github.com/jacksmith15/elastic-log-cli/compare/0.2.0..HEAD
+[0.2.0]: https://github.com/jacksmith15/elastic-log-cli/compare/0.1.0..0.2.0
 [0.1.0]: https://github.com/jacksmith15/elastic-log-cli/compare/initial..0.1.0
 
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
