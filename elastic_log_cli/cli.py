@@ -95,6 +95,7 @@ def cli(
         size=page_size,
         source=source,
         backoff=exponential_backoff(on_backoff=_log_backoff),
+        follow=not end,
     ):
         print(json.dumps(doc["_source"], sort_keys=True))
 
