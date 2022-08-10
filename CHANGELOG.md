@@ -13,6 +13,9 @@ Types of changes are:
 * **Fixed** for any bug fixes.
 
 ## [Unreleased]
+
+
+## [0.2.1] - 2022-08-10
 ### Fixed
 * Omitting the `--end` option now correctly follows logs until interrupted
 
@@ -29,7 +32,8 @@ Types of changes are:
 * Project started :)
 * Implemented support for (most) KQL queries
 
-[Unreleased]: https://github.com/jacksmith15/elastic-log-cli/compare/0.2.0..HEAD
+[Unreleased]: https://github.com/jacksmith15/elastic-log-cli/compare/0.2.1..HEAD
+[0.2.1]: https://github.com/jacksmith15/elastic-log-cli/compare/0.2.0..0.2.1
 [0.2.0]: https://github.com/jacksmith15/elastic-log-cli/compare/0.1.0..0.2.0
 [0.1.0]: https://github.com/jacksmith15/elastic-log-cli/compare/initial..0.1.0
 
